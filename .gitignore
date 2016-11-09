@@ -1,0 +1,8 @@
+*.class
+*.log
+*.gz
+/target
+/.svn
+/.settings
+*.classpath
+*.project

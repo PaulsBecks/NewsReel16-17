@@ -1,0 +1,8 @@
+=RequestSender=
+MainClass: eu.crowdrec.contest.sender.RequestSenderORP
+Parameter: http://<ipOfYourMaschine>:<yourPort> D:/heute/contest.log.2016-02-21.gz <fileToBeCreatedByTheRequestSender>
+
+
+=Evaluation=
+MainClass: eu.crowdrec.contest.evaluation.Evaluator
+Parameter: <fileCreatedByTheRequestSender> D:/heute/contest.log.2016-02-21.gz 600000 t
