@@ -38,30 +38,38 @@ public class MahoutExample {
 	
 	private static boolean moreInput = true;
 	
-	public static void main(String[] args ) throws TasteException{
-		FastByIDMap<PreferenceArray> fastMap = new FastByIDMap<PreferenceArray>();
-		
+	private static UserBasedRecommender recommender;
+	
+	public static void main(String[] args) throws TasteException{
 		Map<long[], List<GenericPreference>> userPreferenceCollection = new HashMap<long[], List<GenericPreference>>();
 		
 		//put current users preference
 		//PreferenceArray prefArray = new GenericUserPreferenceArray(new LinkedList<GenericPreference>());
-		List<GenericPreference> prefs = Arrays.asList(new GenericPreference(0,1,2),
-				new GenericPreference(0,2,1),
-				new GenericPreference(0,3,1));
+		List<GenericPreference> prefs = Arrays.asList(new GenericPreference(0,3,2));
 		List<GenericPreference> prefs1 = Arrays.asList(new GenericPreference(1,1,1),
 				new GenericPreference(1,2,2),
 				new GenericPreference(1,3,1));
 		List<GenericPreference> prefs2 = Arrays.asList(new GenericPreference(2,1,1),
 				new GenericPreference(2,2,2),
-				new GenericPreference(2,3,1));
-		List<GenericPreference> prefs3 = Arrays.asList(new GenericPreference(3,1,3),
-				new GenericPreference(3,2,3),
-				new GenericPreference(3,3,3));
+				new GenericPreference(2,3,1),
+				new GenericPreference(2,4,2));
+		List<GenericPreference> prefs3 = Arrays.asList(new GenericPreference(3,3,3));
+		
 		userPreferenceCollection.put(new long[] {0}, prefs);
 		userPreferenceCollection.put(new long[] {1}, prefs1);
 		userPreferenceCollection.put(new long[] {2}, prefs2);
 		userPreferenceCollection.put(new long[] {3}, prefs3);
 		
+		calculateModel(userPreferenceCollection);
+		
+		for(int i = 0; i<4; i++){
+			System.out.println(Arrays.toString(calcNearestUser(i, 3)));
+		}
+
+	}
+	
+	public static void calculateModel(Map<long[], List<GenericPreference>> userPreferenceCollection ) throws TasteException{
+		FastByIDMap<PreferenceArray> fastMap = new FastByIDMap<PreferenceArray>();
 		
 		for(Entry<long[], List<GenericPreference>> entry : userPreferenceCollection.entrySet()){
 			fastMap.put(entry.getKey()[0], new GenericUserPreferenceArray(entry.getValue()));
@@ -72,16 +80,13 @@ public class MahoutExample {
 		TanimotoCoefficientSimilarity tanimoto = new TanimotoCoefficientSimilarity(dataModel);
 		
 		//System.out.print(dataModel.getNumItems());
-		UserBasedRecommender recommender = new GenericUserBasedRecommender(dataModel, new NearestNUserNeighborhood(2, new LogLikelihoodSimilarity(dataModel), dataModel), tanimoto);
+		recommender = new GenericUserBasedRecommender(dataModel, new NearestNUserNeighborhood(2, new LogLikelihoodSimilarity(dataModel), dataModel), tanimoto);
 		
-		
-		long[] users = recommender.mostSimilarUserIDs(2, 3);
-		for(long user : users){
-			System.out.println(user);
-		}
 	}
 	
-	public static void addPreferenceToUser(long userID, long itemID, Map<long[], LinkedList<Preference>> preferenceMap){
+	public static long[] calcNearestUser(long userID, int amount) throws TasteException{
+
+		return recommender.mostSimilarUserIDs(userID, amount);
 		
 	}
 	
