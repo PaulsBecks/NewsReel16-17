@@ -26,11 +26,12 @@ import org.apache.mahout.cf.taste.recommender.ItemBasedRecommender;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.recommender.UserBasedRecommender;
 import org.apache.mahout.common.distance.EuclideanDistanceMeasure;
+import org.omg.CORBA.Object;
 
 /*
  * Implements Example: http://blog.trifork.com/2009/12/09/mahout-taste-part-one-introduction/
  */
-public class MahoutExample {
+public class MahoutExample{
 	
 	private DataModel dataModel;
 	
@@ -87,6 +88,10 @@ public class MahoutExample {
 		LogLikelihoodSimilarity similarity = new LogLikelihoodSimilarity(dataModel);
 		recommender = new GenericUserBasedRecommender(dataModel, new ThresholdUserNeighborhood(0.1, similarity, dataModel), tanimoto);
 		
+	}
+	
+	public static GenericPreference msgToPreference(int userID, int documentID){
+		return new GenericPreference(userID, documentID, 1);
 	}
 	
 	public static long[] calcNearestUser(long userID, int amount) throws TasteException{

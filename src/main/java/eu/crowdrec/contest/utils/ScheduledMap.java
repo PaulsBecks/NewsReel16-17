@@ -2,11 +2,14 @@ package eu.crowdrec.contest.utils;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.mahout.cf.taste.impl.model.GenericPreference;
 
 /**
  * This class implements an batch aggregation. Entries collected in a map are stored batch-wise in a new processing structure
@@ -161,6 +164,10 @@ public class ScheduledMap<K, V> implements Map<K, V>{
     		
     		
     		// Write the map into ... TODO
+    		/*
+    		 * TODO: Convert Map to Map<long[], List<GenericPreference>> 
+    		 * If K is a tupel with contains userID and documentID then simply call msgToPreference add result to new map
+    		 */
     		for (Map.Entry<K, V> entry : this.shortTermMap[oldActiveElement].entrySet()) {
     			
 			}
