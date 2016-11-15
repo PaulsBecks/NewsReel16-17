@@ -7,12 +7,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.lucene.search.Similarity;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.common.FastByIDMap;
 import org.apache.mahout.cf.taste.impl.model.GenericDataModel;
 import org.apache.mahout.cf.taste.impl.model.GenericPreference;
 import org.apache.mahout.cf.taste.impl.model.GenericUserPreferenceArray;
 import org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood;
+import org.apache.mahout.cf.taste.impl.neighborhood.ThresholdUserNeighborhood;
 import org.apache.mahout.cf.taste.impl.recommender.GenericItemBasedRecommender;
 import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
 import org.apache.mahout.cf.taste.impl.similarity.LogLikelihoodSimilarity;
@@ -64,6 +66,8 @@ public class MahoutExample {
 		
 		for(int i = 0; i<4; i++){
 			System.out.println(Arrays.toString(calcNearestUser(i, 3)));
+			System.out.println(estimatePreference(i, 4));
+			System.out.println(recommend(i,5).size());
 		}
 
 	}
@@ -80,14 +84,26 @@ public class MahoutExample {
 		TanimotoCoefficientSimilarity tanimoto = new TanimotoCoefficientSimilarity(dataModel);
 		
 		//System.out.print(dataModel.getNumItems());
-		recommender = new GenericUserBasedRecommender(dataModel, new NearestNUserNeighborhood(2, new LogLikelihoodSimilarity(dataModel), dataModel), tanimoto);
+		LogLikelihoodSimilarity similarity = new LogLikelihoodSimilarity(dataModel);
+		recommender = new GenericUserBasedRecommender(dataModel, new ThresholdUserNeighborhood(0.1, similarity, dataModel), tanimoto);
 		
 	}
 	
 	public static long[] calcNearestUser(long userID, int amount) throws TasteException{
-
+		
 		return recommender.mostSimilarUserIDs(userID, amount);
 		
 	}
 	
+	public static float estimatePreference(long userID, int documentID) throws TasteException{
+		
+		return recommender.estimatePreference(userID, documentID);
+		
+	}
+	
+	public static List<RecommendedItem> recommend(long userID, int amount) throws TasteException{
+		
+		return recommender.recommend(userID, amount);
+		
+	}
 }
